@@ -35,9 +35,10 @@ const theme = {
   },
 };
 
-function MainNavigator() {
+let globalNavigation = null;
+
+export default function App() {
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentNavigation, setCurrentNavigation] = useState(null);
   const slideAnim = useRef(new Animated.Value(-300)).current;
 
   const toggleSidebar = () => {
@@ -66,11 +67,7 @@ function MainNavigator() {
   };
 
   const screenOptions = ({ navigation }) => {
-    // Store navigation reference
-    if (!currentNavigation) {
-      setCurrentNavigation(navigation);
-    }
-    
+    globalNavigation = navigation;
     return {
       headerStyle: {
         backgroundColor: colors.primary,
@@ -91,65 +88,59 @@ function MainNavigator() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName="HomePage"
-          screenOptions={screenOptions}
-        >
-          <Stack.Screen 
-            name="HomePage" 
-            component={HomePage} 
-            options={{ title: 'SaludMente' }}
-          />
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={{ title: 'Explorar Módulos' }}
-          />
-          <Stack.Screen 
-            name="Diario" 
-            component={DiarioScreen} 
-            options={{ title: 'Mi Diario' }}
-          />
-          <Stack.Screen 
-            name="Capsulas" 
-            component={CapsulasScreen} 
-            options={{ title: 'Cápsulas Educativas' }}
-          />
-          <Stack.Screen 
-            name="Rutinas" 
-            component={RutinasScreen} 
-            options={{ title: 'Rutinas' }}
-          />
-          <Stack.Screen 
-            name="Relajacion" 
-            component={RelajacionScreen} 
-            options={{ title: 'Relajación' }}
-          />
-          <Stack.Screen 
-            name="Chatbot" 
-            component={ChatbotScreen} 
-            options={{ title: 'Asistente Virtual' }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-      
-      <Sidebar 
-        isVisible={sidebarVisible}
-        onClose={closeSidebar}
-        navigation={currentNavigation}
-        slideAnim={slideAnim}
-      />
-    </View>
-  );
-}
-
-export default function App() {
-  return (
     <PaperProvider theme={theme}>
       <SafeAreaProvider>
-        <MainNavigator />
+        <View style={{ flex: 1 }}>
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName="HomePage"
+              screenOptions={screenOptions}
+            >
+              <Stack.Screen 
+                name="HomePage" 
+                component={HomePage} 
+                options={{ title: 'SaludMente' }}
+              />
+              <Stack.Screen 
+                name="Home" 
+                component={HomeScreen} 
+                options={{ title: 'Explorar Módulos' }}
+              />
+              <Stack.Screen 
+                name="Diario" 
+                component={DiarioScreen} 
+                options={{ title: 'Mi Diario' }}
+              />
+              <Stack.Screen 
+                name="Capsulas" 
+                component={CapsulasScreen} 
+                options={{ title: 'Cápsulas Educativas' }}
+              />
+              <Stack.Screen 
+                name="Rutinas" 
+                component={RutinasScreen} 
+                options={{ title: 'Rutinas' }}
+              />
+              <Stack.Screen 
+                name="Relajacion" 
+                component={RelajacionScreen} 
+                options={{ title: 'Relajación' }}
+              />
+              <Stack.Screen 
+                name="Chatbot" 
+                component={ChatbotScreen} 
+                options={{ title: 'Asistente Virtual' }}
+              />
+            </Stack.Navigator>
+          </NavigationContainer>
+          
+          <Sidebar 
+            isVisible={sidebarVisible}
+            onClose={closeSidebar}
+            navigation={globalNavigation}
+            slideAnim={slideAnim}
+          />
+        </View>
       </SafeAreaProvider>
     </PaperProvider>
   );
