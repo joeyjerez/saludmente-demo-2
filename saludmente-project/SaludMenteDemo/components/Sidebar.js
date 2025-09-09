@@ -68,7 +68,7 @@ export default function Sidebar({
       title: 'Mi Perfil',
       icon: 'account-circle',
       screen: 'Profile',
-      color: colors.info
+      color: colors.primary
     }
   ];
 
