@@ -1,0 +1,345 @@
+import React, { useState } from "react";
+import { View, StyleSheet, ScrollView, Modal } from "react-native";
+import { Card, Title, Text, Button, IconButton } from "react-native-paper";
+import { colors } from '../theme/colors';
+
+export default function CapsulasScreen() {
+  const [selectedCapsula, setSelectedCapsula] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const capsulas = [
+    {
+      id: 1,
+      title: "¿Qué es la Ansiedad?",
+      category: "Conceptos Básicos",
+      excerpt:
+        "La ansiedad es una respuesta natural del cuerpo ante situaciones de estrés...",
+      content: `La ansiedad es una respuesta natural del cuerpo ante situaciones de estrés o peligro percibido. Es una emoción normal que todos experimentamos en ciertos momentos de nuestras vidas.
+
+**Síntomas comunes:**
+• Preocupación excesiva
+• Nerviosismo o inquietud
+• Tensión muscular
+• Problemas para concentrarse
+• Alteraciones del sueño
+
+**¿Cuándo buscar ayuda?**
+Si la ansiedad interfiere con tu vida diaria, trabajo o relaciones, es importante buscar apoyo profesional.
+
+**Recuerda:** La ansiedad es tratable y hay muchas estrategias efectivas para manejarla.`,
+      color: colors.diary,
+      icon: "brain",
+    },
+    {
+      id: 2,
+      title: "Técnicas de Respiración",
+      category: "Herramientas Prácticas",
+      excerpt:
+        "Aprende técnicas simples de respiración para manejar momentos de estrés...",
+      content: `La respiración consciente es una de las herramientas más efectivas para manejar la ansiedad y el estrés.
+
+**Técnica 4-7-8:**
+1. Inhala por la nariz durante 4 segundos
+2. Mantén la respiración por 7 segundos
+3. Exhala por la boca durante 8 segundos
+4. Repite 3-4 veces
+
+**Respiración diafragmática:**
+• Coloca una mano en el pecho y otra en el abdomen
+• Respira lentamente por la nariz
+• La mano del abdomen debe moverse más que la del pecho
+• Exhala lentamente por la boca
+
+**Beneficios:**
+• Reduce la frecuencia cardíaca
+• Disminuye la presión arterial
+• Calma el sistema nervioso
+• Mejora la concentración`,
+      color: colors.education,
+      icon: "air-filter",
+    },
+    {
+      id: 3,
+      title: "Mindfulness y Atención Plena",
+      category: "Bienestar Mental",
+      excerpt:
+        "Descubre cómo la atención plena puede ayudarte a vivir el presente...",
+      content: `El mindfulness o atención plena es la práctica de estar completamente presente en el momento actual, sin juzgar.
+
+**¿Cómo practicar mindfulness?**
+• Observa tus pensamientos sin juzgarlos
+• Enfócate en tu respiración
+• Nota las sensaciones en tu cuerpo
+• Escucha los sonidos a tu alrededor
+
+**Ejercicio simple de 5 minutos:**
+1. Siéntate cómodamente
+2. Cierra los ojos o mira un punto fijo
+3. Respira naturalmente
+4. Cuando tu mente divague, vuelve gentilmente a la respiración
+
+**Beneficios comprobados:**
+• Reduce el estrés y la ansiedad
+• Mejora la concentración
+• Aumenta la autoconciencia
+• Mejora la regulación emocional
+• Favorece el bienestar general`,
+      color: colors.relaxation,
+      icon: "meditation",
+    },
+    {
+      id: 4,
+      title: "Autocuidado Diario",
+      category: "Hábitos Saludables",
+      excerpt:
+        "Pequeñas acciones diarias que pueden hacer una gran diferencia...",
+      content: `El autocuidado no es egoísmo, es una necesidad. Cuidar de ti mismo te permite cuidar mejor de otros.
+
+**Autocuidado físico:**
+• Mantén una rutina de sueño regular
+• Aliméntate de forma balanceada
+• Haz ejercicio regularmente
+• Mantente hidratado
+
+**Autocuidado emocional:**
+• Practica la gratitud diariamente
+• Establece límites saludables
+• Expresa tus emociones
+• Busca apoyo cuando lo necesites
+
+**Autocuidado mental:**
+• Limita la exposición a noticias negativas
+• Practica actividades que disfrutes
+• Aprende algo nuevo
+• Medita o practica mindfulness
+
+**Recuerda:** El autocuidado debe ser personalizado. Lo que funciona para otros puede no funcionar para ti, y está bien.`,
+      color: colors.routines,
+      icon: "heart-pulse",
+    },
+    {
+      id: 5,
+      title: "Manejando Pensamientos Negativos",
+      category: "Herramientas Mentales",
+      excerpt:
+        "Estrategias para identificar y cambiar patrones de pensamiento...",
+      content: `Los pensamientos negativos automáticos son comunes, pero podemos aprender a manejarlos de manera más efectiva.
+
+**Técnica de los 3 pasos:**
+1. **Identifica:** ¿Qué pensamiento está causando malestar?
+2. **Cuestiona:** ¿Es este pensamiento realista? ¿Hay evidencia?
+3. **Reemplaza:** Busca una perspectiva más balanceada
+
+**Distorsiones cognitivas comunes:**
+• Pensamiento todo o nada
+• Catastrofización
+• Lectura de mente
+• Personalización excesiva
+
+**Ejercicio práctico:**
+Cuando notes un pensamiento negativo, pregúntate:
+- ¿Es esto un hecho o una opinión?
+- ¿Qué le diría a un amigo en esta situación?
+- ¿Cuál es la evidencia a favor y en contra?
+
+**Recuerda:** Cambiar patrones de pensamiento toma tiempo y práctica. Sé paciente contigo mismo.`,
+      color: colors.chatbot,
+      icon: "lightbulb-on",
+    },
+  ];
+
+  const openModal = (capsula) => {
+    setSelectedCapsula(capsula);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+    setSelectedCapsula(null);
+  };
+
+  return (
+    <View style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        scrollEventThrottle={16}
+        nestedScrollEnabled={true}
+        overScrollMode="always"
+        alwaysBounceVertical={false}
+      >
+        <View style={styles.header}>
+          <Title style={styles.headerTitle}>Cápsulas Educativas</Title>
+          <Text style={styles.headerSubtitle}>
+            Aprende sobre salud mental y bienestar con contenido práctico y
+            científico
+          </Text>
+        </View>
+
+        <View style={styles.capsulasList}>
+          {capsulas.map((capsula) => (
+            <Card
+              key={capsula.id}
+              style={[styles.capsulaCard, { backgroundColor: colors.surfaceDark }]}
+            >
+              <Card.Content>
+                <View style={styles.cardHeader}>
+                  <View style={styles.cardTitleContainer}>
+                    <Text style={[styles.category, { color: capsula.color }]}>
+                      {capsula.category}
+                    </Text>
+                    <Title style={[styles.capsulaTitle, { color: colors.text.white }]}>{capsula.title}</Title>
+                  </View>
+                  <IconButton
+                    icon={capsula.icon}
+                    size={24}
+                    iconColor={capsula.color}
+                  />
+                </View>
+                <Text style={[styles.excerpt, { color: colors.text.light }]}>{capsula.excerpt}</Text>
+                <Button
+                  mode="contained"
+                  onPress={() => openModal(capsula)}
+                  style={[
+                    styles.readButton,
+                    { backgroundColor: capsula.color },
+                  ]}
+                  labelStyle={{ color: colors.text.white }}
+                  compact
+                >
+                  Leer Más
+                </Button>
+              </Card.Content>
+            </Card>
+          ))}
+        </View>
+      </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={closeModal}
+              style={styles.closeButton}
+            />
+            <Title style={styles.modalTitle}>{selectedCapsula?.title}</Title>
+          </View>
+          <ScrollView
+            style={styles.modalContent}
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            scrollEventThrottle={16}
+            nestedScrollEnabled={true}
+            overScrollMode="always"
+            alwaysBounceVertical={false}
+          >
+            <Text style={styles.modalText}>{selectedCapsula?.content}</Text>
+          </ScrollView>
+        </View>
+      </Modal>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+  header: {
+    backgroundColor: colors.surface,
+    padding: 20,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: colors.text.primary,
+    textAlign: "center",
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    textAlign: "center",
+    marginTop: 5,
+  },
+  capsulasList: {
+    padding: 10,
+  },
+  capsulaCard: {
+    marginVertical: 8,
+    marginHorizontal: 5,
+    elevation: 4,
+    borderRadius: 12,
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 10,
+  },
+  cardTitleContainer: {
+    flex: 1,
+  },
+  category: {
+    fontSize: 12,
+    fontWeight: "bold",
+    textTransform: "uppercase",
+    marginBottom: 5,
+  },
+  capsulaTitle: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  excerpt: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 15,
+  },
+  readButton: {
+    borderRadius: 20,
+    alignSelf: "flex-start",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: colors.surface,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.cardBorder,
+  },
+  closeButton: {
+    margin: 0,
+  },
+  modalTitle: {
+    flex: 1,
+    fontSize: 20,
+    marginLeft: 10,
+    color: colors.text.primary,
+  },
+  modalContent: {
+    flexGrow: 1,
+    padding: 20,
+  },
+  modalText: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: colors.text.primary,
+  },
+});

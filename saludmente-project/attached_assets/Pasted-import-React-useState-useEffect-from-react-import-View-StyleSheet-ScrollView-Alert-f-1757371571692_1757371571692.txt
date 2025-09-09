@@ -1,0 +1,222 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, Alert } from 'react-native';
+import { TextInput, Button, Card, Title, Text, Chip } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function DiarioScreen() {
+  const [entry, setEntry] = useState('');
+  const [mood, setMood] = useState('');
+  const [entries, setEntries] = useState([]);
+
+  const moods = [
+    { label: '😊 Feliz', value: 'feliz' },
+    { label: '😢 Triste', value: 'triste' },
+    { label: '😰 Ansioso', value: 'ansioso' },
+    { label: '😴 Cansado', value: 'cansado' },
+    { label: '😌 Tranquilo', value: 'tranquilo' },
+    { label: '😤 Enojado', value: 'enojado' }
+  ];
+
+  useEffect(() => {
+    loadEntries();
+  }, []);
+
+  const loadEntries = async () => {
+    try {
+      const storedEntries = await AsyncStorage.getItem('diario_entries');
+      if (storedEntries) {
+        setEntries(JSON.parse(storedEntries));
+      }
+    } catch (error) {
+      console.log('Error loading entries:', error);
+    }
+  };
+
+  const saveEntry = async () => {
+    if (!entry.trim() || !mood) {
+      Alert.alert('Error', 'Por favor completa todos los campos');
+      return;
+    }
+
+    const newEntry = {
+      id: Date.now(),
+      text: entry,
+      mood: mood,
+      date: new Date().toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    };
+
+    const updatedEntries = [newEntry, ...entries];
+    
+    try {
+      await AsyncStorage.setItem('diario_entries', JSON.stringify(updatedEntries));
+      setEntries(updatedEntries);
+      setEntry('');
+      setMood('');
+      Alert.alert('¡Guardado!', 'Tu entrada ha sido guardada exitosamente');
+    } catch (error) {
+      Alert.alert('Error', 'No se pudo guardar la entrada');
+    }
+  };
+
+  const getMoodEmoji = (moodValue) => {
+    const foundMood = moods.find(m => m.value === moodValue);
+    return foundMood ? foundMood.label : '😐 Neutral';
+  };
+
+  return (
+    <ScrollView 
+      style={styles.scrollView}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      bounces={false}
+      scrollEventThrottle={16}
+      nestedScrollEnabled={true}
+      overScrollMode="always"
+      alwaysBounceVertical={false}
+    >
+      <View style={styles.inputSection}>
+        <Title style={styles.sectionTitle}>¿Cómo te sientes hoy?</Title>
+        
+        <Text style={styles.label}>Estado de ánimo:</Text>
+        <ScrollView horizontal style={styles.moodContainer} showsHorizontalScrollIndicator={false}>
+          {moods.map((moodOption) => (
+            <Chip
+              key={moodOption.value}
+              mode={mood === moodOption.value ? 'flat' : 'outlined'}
+              selected={mood === moodOption.value}
+              onPress={() => setMood(moodOption.value)}
+              style={styles.moodChip}
+            >
+              {moodOption.label}
+            </Chip>
+          ))}
+        </ScrollView>
+
+        <Text style={styles.label}>Escribe sobre tu día:</Text>
+        <TextInput
+          mode="outlined"
+          multiline
+          numberOfLines={6}
+          value={entry}
+          onChangeText={setEntry}
+          placeholder="Comparte tus pensamientos, emociones y experiencias del día..."
+          style={styles.textInput}
+        />
+
+        <Button 
+          mode="contained" 
+          onPress={saveEntry}
+          style={styles.saveButton}
+          icon="content-save"
+        >
+          Guardar Entrada
+        </Button>
+      </View>
+
+      <View style={styles.entriesSection}>
+        <Title style={styles.sectionTitle}>Entradas Anteriores</Title>
+        {entries.length === 0 ? (
+          <Card style={styles.emptyCard}>
+            <Card.Content>
+              <Text style={styles.emptyText}>
+                Aún no tienes entradas. ¡Escribe tu primera entrada arriba!
+              </Text>
+            </Card.Content>
+          </Card>
+        ) : (
+          entries.map((item) => (
+            <Card key={item.id} style={styles.entryCard}>
+              <Card.Content>
+                <View style={styles.entryHeader}>
+                  <Text style={styles.entryDate}>{item.date}</Text>
+                  <Chip mode="outlined" compact>
+                    {getMoodEmoji(item.mood)}
+                  </Chip>
+                </View>
+                <Text style={styles.entryText}>{item.text}</Text>
+              </Card.Content>
+            </Card>
+          ))
+        )}
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flexGrow: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  inputSection: {
+    backgroundColor: '#fff',
+    margin: 10,
+    padding: 15,
+    borderRadius: 10,
+    elevation: 3,
+  },
+  entriesSection: {
+    margin: 10,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    marginBottom: 15,
+    color: '#2c3e50',
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    fontWeight: '500',
+    color: '#34495e',
+  },
+  moodContainer: {
+    marginBottom: 20,
+  },
+  moodChip: {
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  textInput: {
+    marginBottom: 20,
+  },
+  saveButton: {
+    backgroundColor: '#4ECDC4',
+  },
+  entryCard: {
+    marginVertical: 5,
+    elevation: 2,
+  },
+  entryHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  entryDate: {
+    fontSize: 14,
+    color: '#7f8c8d',
+    fontWeight: '500',
+  },
+  entryText: {
+    fontSize: 16,
+    lineHeight: 24,
+  },
+  emptyCard: {
+    elevation: 2,
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#7f8c8d',
+    fontStyle: 'italic',
+  },
+});

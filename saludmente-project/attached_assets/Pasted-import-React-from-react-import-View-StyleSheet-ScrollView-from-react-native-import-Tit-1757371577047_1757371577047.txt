@@ -1,0 +1,143 @@
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Title, Card, Button, Text } from 'react-native-paper';
+
+export default function HomeScreen({ navigation }) {
+  const menuItems = [
+    {
+      title: 'Diario Emocional',
+      description: 'Registra tus emociones y pensamientos diarios',
+      icon: 'book-edit',
+      screen: 'Diario',
+      color: '#FF6B6B'
+    },
+    {
+      title: 'Cápsulas Educativas',
+      description: 'Aprende sobre salud mental y bienestar',
+      icon: 'school',
+      screen: 'Capsulas',
+      color: '#4ECDC4'
+    },
+    {
+      title: 'Rutinas de Autocuidado',
+      description: 'Mantén hábitos saludables para tu bienestar',
+      icon: 'heart-pulse',
+      screen: 'Rutinas',
+      color: '#45B7D1'
+    },
+    {
+      title: 'Ejercicios de Relajación',
+      description: 'Técnicas de respiración y mindfulness',
+      icon: 'meditation',
+      screen: 'Relax',
+      color: '#96CEB4'
+    },
+    {
+      title: 'Chatbot Empático',
+      description: 'Conversación de apoyo sobre ansiedad',
+      icon: 'robot',
+      screen: 'Chatbot',
+      color: '#FFEAA7'
+    }
+  ];
+
+  return (
+    <ScrollView 
+      style={styles.scrollView}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+      scrollEventThrottle={16}
+      nestedScrollEnabled={true}
+      overScrollMode="always"
+      alwaysBounceVertical={false}
+    >
+      <View style={styles.header}>
+        <Title style={styles.title}>¡Bienvenido a SaludMente!</Title>
+        <Text style={styles.subtitle}>
+          Tu espacio seguro para el cuidado de la salud mental
+        </Text>
+      </View>
+
+      <View style={styles.menuContainer}>
+        {menuItems.map((item, index) => (
+          <Card key={index} style={[styles.card, { borderLeftColor: item.color }]}>
+            <Card.Content>
+              <View style={styles.cardContent}>
+                <View style={styles.cardText}>
+                  <Title style={styles.cardTitle}>{item.title}</Title>
+                  <Text style={styles.cardDescription}>{item.description}</Text>
+                </View>
+                <Button 
+                  mode="contained" 
+                  onPress={() => navigation.navigate(item.screen)}
+                  style={[styles.button, { backgroundColor: item.color }]}
+                  compact
+                >
+                  Abrir
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        ))}
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flexGrow: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    padding: 20,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    marginTop: 5,
+  },
+  menuContainer: {
+    padding: 10,
+  },
+  card: {
+    marginVertical: 8,
+    marginHorizontal: 5,
+    elevation: 3,
+    borderLeftWidth: 5,
+  },
+  cardContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  cardText: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    marginBottom: 5,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  button: {
+    borderRadius: 20,
+  },
+});

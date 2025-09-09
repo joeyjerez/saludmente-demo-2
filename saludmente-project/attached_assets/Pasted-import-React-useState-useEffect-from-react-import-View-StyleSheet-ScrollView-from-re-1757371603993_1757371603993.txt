@@ -1,0 +1,351 @@
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Card, Title, Text, Checkbox, Button, ProgressBar } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+export default function RutinasScreen() {
+  const [rutinas, setRutinas] = useState([]);
+  const [completedToday, setCompletedToday] = useState({});
+
+  const rutinasDefault = [
+    {
+      id: 1,
+      title: 'Meditación matutina',
+      description: '10 minutos de meditación al despertar',
+      category: 'Mindfulness',
+      time: '10 min',
+      icon: '🧘‍♀️',
+      color: '#96CEB4'
+    },
+    {
+      id: 2,
+      title: 'Ejercicio físico',
+      description: 'Actividad física por al menos 30 minutos',
+      category: 'Salud Física',
+      time: '30 min',
+      icon: '🏃‍♂️',
+      color: '#FF6B6B'
+    },
+    {
+      id: 3,
+      title: 'Gratitud diaria',
+      description: 'Escribir 3 cosas por las que estoy agradecido',
+      category: 'Bienestar Emocional',
+      time: '5 min',
+      icon: '🙏',
+      color: '#4ECDC4'
+    },
+    {
+      id: 4,
+      title: 'Lectura relajante',
+      description: 'Leer un libro o artículo inspirador',
+      category: 'Crecimiento Personal',
+      time: '20 min',
+      icon: '📚',
+      color: '#45B7D1'
+    },
+    {
+      id: 5,
+      title: 'Conexión social',
+      description: 'Llamar o escribir a un ser querido',
+      category: 'Relaciones',
+      time: '15 min',
+      icon: '💬',
+      color: '#FFEAA7'
+    },
+    {
+      id: 6,
+      title: 'Tiempo sin pantallas',
+      description: 'Desconectarse de dispositivos por 1 hora',
+      category: 'Descanso Mental',
+      time: '60 min',
+      icon: '📵',
+      color: '#A29BFE'
+    },
+    {
+      id: 7,
+      title: 'Respiración profunda',
+      description: 'Ejercicios de respiración antes de dormir',
+      category: 'Relajación',
+      time: '10 min',
+      icon: '🌬️',
+      color: '#74B9FF'
+    },
+    {
+      id: 8,
+      title: 'Organizar espacio',
+      description: 'Mantener ordenado mi espacio personal',
+      category: 'Ambiente',
+      time: '15 min',
+      icon: '🏠',
+      color: '#FD79A8'
+    }
+  ];
+
+  useEffect(() => {
+    initializeRutinas();
+    loadCompletedToday();
+  }, []);
+
+  const initializeRutinas = () => {
+    setRutinas(rutinasDefault);
+  };
+
+  const loadCompletedToday = async () => {
+    try {
+      const today = new Date().toDateString();
+      const stored = await AsyncStorage.getItem(`rutinas_${today}`);
+      if (stored) {
+        setCompletedToday(JSON.parse(stored));
+      }
+    } catch (error) {
+      console.log('Error loading completed routines:', error);
+    }
+  };
+
+  const toggleRutina = async (rutinaId) => {
+    const today = new Date().toDateString();
+    const newCompleted = {
+      ...completedToday,
+      [rutinaId]: !completedToday[rutinaId]
+    };
+    
+    setCompletedToday(newCompleted);
+    
+    try {
+      await AsyncStorage.setItem(`rutinas_${today}`, JSON.stringify(newCompleted));
+    } catch (error) {
+      console.log('Error saving routine completion:', error);
+    }
+  };
+
+  const resetRutinas = async () => {
+    const today = new Date().toDateString();
+    setCompletedToday({});
+    try {
+      await AsyncStorage.removeItem(`rutinas_${today}`);
+    } catch (error) {
+      console.log('Error resetting routines:', error);
+    }
+  };
+
+  const getProgress = () => {
+    const completed = Object.values(completedToday).filter(Boolean).length;
+    return completed / rutinas.length;
+  };
+
+  const getCompletedCount = () => {
+    return Object.values(completedToday).filter(Boolean).length;
+  };
+
+  return (
+    <ScrollView 
+      style={styles.scrollView}
+      contentContainerStyle={{ flexGrow: 1, paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+      bounces={false}
+      scrollEventThrottle={16}
+      nestedScrollEnabled={true}
+      overScrollMode="always"
+      alwaysBounceVertical={false}
+    >
+      <View style={styles.header}>
+        <Title style={styles.headerTitle}>Rutinas de Autocuidado</Title>
+        <Text style={styles.headerSubtitle}>
+          Construye hábitos saludables día a día
+        </Text>
+        
+        <Card style={styles.progressCard}>
+          <Card.Content>
+            <View style={styles.progressHeader}>
+              <Text style={styles.progressTitle}>Progreso de Hoy</Text>
+              <Text style={styles.progressCount}>
+                {getCompletedCount()}/{rutinas.length}
+              </Text>
+            </View>
+            <ProgressBar 
+              progress={getProgress()} 
+              color="#4ECDC4" 
+              style={styles.progressBar}
+            />
+            <Text style={styles.progressText}>
+              {Math.round(getProgress() * 100)}% completado
+            </Text>
+          </Card.Content>
+        </Card>
+      </View>
+
+      <View style={styles.rutinasContainer}>
+        {rutinas.map((rutina) => {
+          const isCompleted = completedToday[rutina.id] || false;
+          return (
+            <Card 
+              key={rutina.id} 
+              style={[
+                styles.rutinaCard, 
+                { borderLeftColor: rutina.color },
+                isCompleted && styles.completedCard
+              ]}
+            >
+              <Card.Content>
+                <View style={styles.rutinaHeader}>
+                  <View style={styles.rutinaInfo}>
+                    <View style={styles.rutinaTitle}>
+                      <Text style={styles.rutinaIcon}>{rutina.icon}</Text>
+                      <View style={styles.rutinaTitleText}>
+                        <Title style={[styles.title, isCompleted && styles.completedTitle]}>
+                          {rutina.title}
+                        </Title>
+                        <Text style={[styles.category, { color: rutina.color }]}>
+                          {rutina.category}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={styles.description}>{rutina.description}</Text>
+                    <Text style={styles.time}>⏱️ {rutina.time}</Text>
+                  </View>
+                  <Checkbox
+                    status={isCompleted ? 'checked' : 'unchecked'}
+                    onPress={() => toggleRutina(rutina.id)}
+                    color={rutina.color}
+                  />
+                </View>
+              </Card.Content>
+            </Card>
+          );
+        })}
+      </View>
+
+      <View style={styles.actions}>
+        <Button 
+          mode="outlined" 
+          onPress={resetRutinas}
+          style={styles.resetButton}
+          icon="refresh"
+        >
+          Reiniciar Día
+        </Button>
+      </View>
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  scrollView: {
+    flexGrow: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    backgroundColor: '#fff',
+    padding: 20,
+    marginBottom: 10,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#7f8c8d',
+    textAlign: 'center',
+    marginTop: 5,
+    marginBottom: 20,
+  },
+  progressCard: {
+    elevation: 3,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  progressTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2c3e50',
+  },
+  progressCount: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4ECDC4',
+  },
+  progressBar: {
+    height: 8,
+    borderRadius: 4,
+    marginBottom: 10,
+  },
+  progressText: {
+    textAlign: 'center',
+    color: '#7f8c8d',
+    fontSize: 14,
+  },
+  rutinasContainer: {
+    padding: 10,
+  },
+  rutinaCard: {
+    marginVertical: 5,
+    elevation: 2,
+    borderLeftWidth: 5,
+  },
+  completedCard: {
+    backgroundColor: '#f8f9fa',
+    opacity: 0.8,
+  },
+  rutinaHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  rutinaInfo: {
+    flex: 1,
+    paddingRight: 10,
+  },
+  rutinaTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  rutinaIcon: {
+    fontSize: 24,
+    marginRight: 10,
+  },
+  rutinaTitleText: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 18,
+    marginBottom: 2,
+  },
+  completedTitle: {
+    textDecorationLine: 'line-through',
+    color: '#7f8c8d',
+  },
+  category: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
+  },
+  time: {
+    fontSize: 12,
+    color: '#95a5a6',
+  },
+  actions: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  resetButton: {
+    borderColor: '#e74c3c',
+  },
+});
