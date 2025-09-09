@@ -35,12 +35,6 @@ export default function Sidebar({
       color: colors.diary
     },
     {
-      title: 'Cápsulas Educativas',
-      icon: 'school',
-      screen: 'Capsulas',
-      color: colors.education
-    },
-    {
       title: 'Rutinas de Autocuidado',
       icon: 'heart-pulse',
       screen: 'Rutinas',
