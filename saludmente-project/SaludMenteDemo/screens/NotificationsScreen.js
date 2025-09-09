@@ -1,7 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Dimensions, Platform } from 'react-native';
 import { Title, Text, Card, List, Divider } from 'react-native-paper';
 import { colors } from '../theme/colors';
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
+const isSmallScreen = width < 375;
 
 export default function NotificationsScreen({ navigation }) {
   const notifications = [
@@ -124,64 +128,74 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.surface,
-    padding: 20,
-    marginBottom: 15,
+    paddingHorizontal: isSmallScreen ? 15 : (isTablet ? 30 : 20),
+    paddingVertical: isTablet ? 25 : 20,
+    marginBottom: isTablet ? 20 : 15,
   },
   title: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : (isSmallScreen ? 20 : 24),
     fontWeight: 'bold',
     color: colors.text.primary,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
     textAlign: 'center',
-    marginTop: 5,
+    marginTop: isTablet ? 8 : 5,
+    lineHeight: isTablet ? 24 : (isSmallScreen ? 20 : 22),
   },
   notificationsContainer: {
-    paddingHorizontal: 15,
+    paddingHorizontal: isSmallScreen ? 12 : (isTablet ? 20 : 15),
   },
   notificationCard: {
-    marginBottom: 10,
-    elevation: 2,
-    borderRadius: 12,
+    marginBottom: isTablet ? 15 : 10,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 2 : undefined,
+    borderRadius: isTablet ? 15 : 12,
   },
   unreadCard: {
-    borderLeftWidth: 4,
+    borderLeftWidth: isTablet ? 5 : 4,
     borderLeftColor: colors.primary,
   },
   notificationIcon: {
-    marginTop: 8,
+    marginTop: isTablet ? 10 : 8,
   },
   notificationTitle: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     fontWeight: '500',
     color: colors.text.primary,
+    lineHeight: isTablet ? 24 : (isSmallScreen ? 20 : 22),
   },
   unreadTitle: {
     fontWeight: 'bold',
   },
   notificationDescription: {
-    fontSize: 14,
+    fontSize: isTablet ? 16 : (isSmallScreen ? 12 : 14),
     color: colors.text.secondary,
-    marginTop: 4,
+    marginTop: isTablet ? 6 : 4,
+    lineHeight: isTablet ? 22 : (isSmallScreen ? 18 : 20),
   },
   timeText: {
-    fontSize: 12,
+    fontSize: isTablet ? 14 : (isSmallScreen ? 10 : 12),
     color: colors.text.secondary,
-    marginTop: 12,
+    marginTop: isTablet ? 15 : 12,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 60,
+    paddingVertical: isTablet ? 80 : 60,
+    paddingHorizontal: isSmallScreen ? 20 : 30,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: isTablet ? 25 : 20,
+    lineHeight: isTablet ? 26 : (isSmallScreen ? 20 : 22),
   },
 });

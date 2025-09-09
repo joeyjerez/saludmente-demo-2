@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Dimensions, Platform } from 'react-native';
 import { 
   Title, 
   Text, 
@@ -11,6 +11,10 @@ import {
   Button
 } from 'react-native-paper';
 import { colors } from '../theme/colors';
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
+const isSmallScreen = width < 375;
 
 export default function ProfileScreen({ navigation }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -176,74 +180,85 @@ const styles = StyleSheet.create({
   profileHeader: {
     backgroundColor: colors.surface,
     alignItems: 'center',
-    padding: 30,
-    marginBottom: 20,
+    paddingHorizontal: isSmallScreen ? 20 : (isTablet ? 40 : 30),
+    paddingVertical: isTablet ? 35 : (isSmallScreen ? 25 : 30),
+    marginBottom: isTablet ? 25 : 20,
   },
   avatar: {
     backgroundColor: colors.primary,
-    marginBottom: 15,
+    marginBottom: isTablet ? 20 : 15,
   },
   userName: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : (isSmallScreen ? 20 : 24),
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: 5,
+    marginBottom: isTablet ? 8 : 5,
   },
   userEmail: {
-    fontSize: 16,
+    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
-    marginBottom: 10,
+    marginBottom: isTablet ? 12 : 10,
   },
   memberSince: {
-    fontSize: 14,
+    fontSize: isTablet ? 16 : (isSmallScreen ? 12 : 14),
     color: colors.text.secondary,
     fontStyle: 'italic',
   },
   statsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    gap: 10,
+    flexDirection: isSmallScreen ? 'column' : 'row',
+    paddingHorizontal: isSmallScreen ? 12 : (isTablet ? 20 : 15),
+    marginBottom: isTablet ? 25 : 20,
+    gap: isTablet ? 15 : 10,
   },
   statCard: {
-    flex: 1,
-    elevation: 2,
-    borderRadius: 12,
+    flex: isSmallScreen ? 0 : 1,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 2 : undefined,
+    borderRadius: isTablet ? 15 : 12,
   },
   statContent: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: isTablet ? 15 : 10,
   },
   statNumber: {
-    fontSize: 24,
+    fontSize: isTablet ? 28 : (isSmallScreen ? 20 : 24),
     fontWeight: 'bold',
     color: colors.text.primary,
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: isTablet ? 14 : (isSmallScreen ? 10 : 12),
     color: colors.text.secondary,
     textAlign: 'center',
-    marginTop: 5,
+    marginTop: isTablet ? 8 : 5,
+    lineHeight: isTablet ? 18 : (isSmallScreen ? 14 : 16),
   },
   optionsCard: {
-    marginHorizontal: 15,
-    marginBottom: 15,
-    elevation: 2,
-    borderRadius: 12,
+    marginHorizontal: isSmallScreen ? 12 : (isTablet ? 20 : 15),
+    marginBottom: isTablet ? 20 : 15,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 2 : undefined,
+    borderRadius: isTablet ? 15 : 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: isTablet ? 20 : (isSmallScreen ? 16 : 18),
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: 10,
+    marginBottom: isTablet ? 15 : 10,
   },
   actionButtons: {
-    paddingHorizontal: 15,
-    paddingBottom: 30,
-    gap: 15,
+    paddingHorizontal: isSmallScreen ? 12 : (isTablet ? 20 : 15),
+    paddingBottom: isTablet ? 40 : 30,
+    gap: isTablet ? 20 : 15,
   },
   actionButton: {
-    borderRadius: 25,
-    paddingVertical: 5,
+    borderRadius: isTablet ? 30 : 25,
+    paddingVertical: isTablet ? 8 : 5,
+    minHeight: isTablet ? 50 : 45,
   },
 });

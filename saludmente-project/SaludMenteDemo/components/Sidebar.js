@@ -5,13 +5,15 @@ import {
   Animated, 
   TouchableOpacity, 
   Dimensions,
-  TouchableWithoutFeedback 
+  Pressable,
+  Platform 
 } from 'react-native';
 import { Text, Divider, List } from 'react-native-paper';
 import { colors } from '../theme/colors';
 
-const { width } = Dimensions.get('window');
-const SIDEBAR_WIDTH = width * 0.75;
+const { width, height } = Dimensions.get('window');
+const isTablet = width >= 768;
+const SIDEBAR_WIDTH = isTablet ? Math.min(300, width * 0.4) : Math.min(280, width * 0.85);
 
 export default function Sidebar({ 
   isVisible, 
@@ -79,9 +81,7 @@ export default function Sidebar({
 
   return (
     <View style={styles.overlay}>
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.backdrop} />
-      </TouchableWithoutFeedback>
+      <Pressable onPress={onClose} style={styles.backdrop} />
       
       <Animated.View 
         style={[
@@ -166,17 +166,18 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.primary,
-    padding: 30,
-    paddingTop: 60,
+    paddingHorizontal: isTablet ? 30 : 20,
+    paddingTop: Platform.OS === 'ios' ? 60 : 50,
+    paddingBottom: isTablet ? 25 : 20,
   },
   appTitle: {
-    fontSize: 24,
+    fontSize: isTablet ? 24 : 20,
     fontWeight: 'bold',
     color: colors.text.white,
     marginBottom: 5,
   },
   appSubtitle: {
-    fontSize: 16,
+    fontSize: isTablet ? 16 : 14,
     color: colors.text.white,
     opacity: 0.8,
   },
@@ -185,43 +186,47 @@ const styles = StyleSheet.create({
   },
   menuContainer: {
     flex: 1,
-    paddingTop: 20,
+    paddingTop: isTablet ? 20 : 15,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    marginHorizontal: 10,
+    paddingHorizontal: isTablet ? 20 : 15,
+    paddingVertical: isTablet ? 15 : 12,
+    marginHorizontal: isTablet ? 10 : 8,
     borderRadius: 12,
-    marginBottom: 5,
+    marginBottom: 3,
+    minHeight: isTablet ? 60 : 50,
   },
   iconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: isTablet ? 40 : 35,
+    height: isTablet ? 40 : 35,
+    borderRadius: isTablet ? 20 : 17.5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
+    marginRight: isTablet ? 15 : 12,
   },
   menuIcon: {
     margin: 0,
   },
   menuText: {
-    fontSize: 16,
+    fontSize: isTablet ? 16 : 14,
     color: colors.text.primary,
     fontWeight: '500',
     flex: 1,
+    flexWrap: 'wrap',
   },
   footer: {
-    padding: 20,
+    paddingHorizontal: isTablet ? 20 : 15,
+    paddingVertical: isTablet ? 20 : 15,
     borderTopWidth: 1,
     borderTopColor: colors.cardBorder,
   },
   footerText: {
-    fontSize: 14,
+    fontSize: isTablet ? 14 : 12,
     color: colors.text.secondary,
     textAlign: 'center',
     fontStyle: 'italic',
+    lineHeight: isTablet ? 20 : 18,
   },
 });
