@@ -1,10 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { View, Animated, TouchableOpacity } from 'react-native';
+import { View, Animated, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider, MD3LightTheme } from 'react-native-paper';
 import { List } from 'react-native-paper';
+
+const { width } = Dimensions.get('window');
+const isTablet = width >= 768;
+const isSmallScreen = width < 375;
 
 // Import screens
 import HomePage from './screens/HomePage';
@@ -73,32 +77,70 @@ export default function App() {
     return {
       headerStyle: {
         backgroundColor: colors.primary,
+        height: Platform.OS === 'ios' ? (isTablet ? 100 : 90) : (isTablet ? 70 : 60),
       },
       headerTintColor: colors.text.white,
       headerTitleStyle: {
         fontWeight: 'bold',
+        fontSize: isTablet ? 20 : (isSmallScreen ? 16 : 18),
       },
       headerLeft: () => (
         <TouchableOpacity
           onPress={toggleSidebar}
-          style={{ marginLeft: 15, padding: 5 }}
+          style={{ 
+            marginLeft: isTablet ? 20 : (isSmallScreen ? 10 : 15), 
+            padding: isTablet ? 8 : 5,
+            minWidth: isTablet ? 44 : 40,
+            minHeight: isTablet ? 44 : 40,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}
         >
-          <List.Icon icon="menu" color={colors.text.white} />
+          <List.Icon 
+            icon="menu" 
+            color={colors.text.white}
+            size={isTablet ? 28 : (isSmallScreen ? 20 : 24)}
+          />
         </TouchableOpacity>
       ),
       headerRight: () => (
-        <View style={{ flexDirection: 'row', marginRight: 15 }}>
+        <View style={{ 
+          flexDirection: 'row', 
+          marginRight: isTablet ? 20 : (isSmallScreen ? 10 : 15),
+          alignItems: 'center'
+        }}>
           <TouchableOpacity
             onPress={() => navigation.navigate('Notifications')}
-            style={{ padding: 5, marginRight: 10 }}
+            style={{ 
+              padding: isTablet ? 8 : 5, 
+              marginRight: isTablet ? 15 : 10,
+              minWidth: isTablet ? 44 : 40,
+              minHeight: isTablet ? 44 : 40,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
           >
-            <List.Icon icon="bell" color={colors.text.white} />
+            <List.Icon 
+              icon="bell" 
+              color={colors.text.white}
+              size={isTablet ? 26 : (isSmallScreen ? 18 : 22)}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
-            style={{ padding: 5 }}
+            style={{ 
+              padding: isTablet ? 8 : 5,
+              minWidth: isTablet ? 44 : 40,
+              minHeight: isTablet ? 44 : 40,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
           >
-            <List.Icon icon="account-circle" color={colors.text.white} />
+            <List.Icon 
+              icon="account-circle" 
+              color={colors.text.white}
+              size={isTablet ? 26 : (isSmallScreen ? 18 : 22)}
+            />
           </TouchableOpacity>
         </View>
       ),
