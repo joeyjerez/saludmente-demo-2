@@ -14,6 +14,8 @@ import CapsulasScreen from './screens/CapsulasScreen';
 import RutinasScreen from './screens/RutinasScreen';
 import RelajacionScreen from './screens/RelajacionScreen';
 import ChatbotScreen from './screens/ChatbotScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 // Import components
 import Sidebar from './components/Sidebar';
@@ -84,6 +86,22 @@ export default function App() {
           <List.Icon icon="menu" color={colors.text.white} />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <View style={{ flexDirection: 'row', marginRight: 15 }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Notifications')}
+            style={{ padding: 5, marginRight: 10 }}
+          >
+            <List.Icon icon="bell" color={colors.text.white} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+            style={{ padding: 5 }}
+          >
+            <List.Icon icon="account-circle" color={colors.text.white} />
+          </TouchableOpacity>
+        </View>
+      ),
     };
   };
 
@@ -130,6 +148,16 @@ export default function App() {
                 name="Chatbot" 
                 component={ChatbotScreen} 
                 options={{ title: 'Asistente Virtual' }}
+              />
+              <Stack.Screen 
+                name="Notifications" 
+                component={NotificationsScreen} 
+                options={{ title: 'Notificaciones' }}
+              />
+              <Stack.Screen 
+                name="Profile" 
+                component={ProfileScreen} 
+                options={{ title: 'Mi Perfil' }}
               />
             </Stack.Navigator>
           </NavigationContainer>

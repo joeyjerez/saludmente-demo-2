@@ -55,6 +55,18 @@ export default function Sidebar({
       icon: 'robot',
       screen: 'Chatbot',
       color: colors.chatbot
+    },
+    {
+      title: 'Notificaciones',
+      icon: 'bell',
+      screen: 'Notifications',
+      color: colors.warning
+    },
+    {
+      title: 'Mi Perfil',
+      icon: 'account-circle',
+      screen: 'Profile',
+      color: colors.info
     }
   ];
 
