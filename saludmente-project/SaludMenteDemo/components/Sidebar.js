@@ -218,15 +218,18 @@ const styles = StyleSheet.create({
   },
   footer: {
     paddingHorizontal: isTablet ? 20 : 15,
-    paddingVertical: isTablet ? 20 : 15,
+    paddingVertical: isTablet ? 25 : 20,
+    paddingBottom: Platform.OS === 'ios' ? (isTablet ? 30 : 25) : (isTablet ? 25 : 20),
     borderTopWidth: 1,
     borderTopColor: colors.cardBorder,
+    backgroundColor: colors.surface,
   },
   footerText: {
     fontSize: isTablet ? 14 : 12,
     color: colors.text.secondary,
     textAlign: 'center',
     fontStyle: 'italic',
-    lineHeight: isTablet ? 20 : 18,
+    lineHeight: isTablet ? 22 : 20,
+    paddingHorizontal: isTablet ? 10 : 5,
   },
 });
