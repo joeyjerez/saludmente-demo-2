@@ -2,9 +2,36 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Title, Card, Button, Text } from 'react-native-paper';
 import { colors } from '../theme/colors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function HomeScreen({ navigation }) {
-  const menuItems = [
+type RootStackParamList = {
+  HomePage: undefined;
+  Home: undefined;
+  Diario: undefined;
+  Capsulas: undefined;
+  Rutinas: undefined;
+  Relajacion: undefined;
+  Chatbot: undefined;
+  Notifications: undefined;
+  Profile: undefined;
+};
+
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+
+interface HomeScreenProps {
+  navigation: HomeScreenNavigationProp;
+}
+
+interface MenuItem {
+  title: string;
+  description: string;
+  icon: string;
+  screen: keyof RootStackParamList;
+  color: string;
+}
+
+export default function HomeScreen({ navigation }: HomeScreenProps) {
+  const menuItems: MenuItem[] = [
     {
       title: 'Diario Emocional',
       description: 'Registra tus emociones y pensamientos diarios',
@@ -129,14 +156,16 @@ const styles = StyleSheet.create({
   },
   cardText: {
     flex: 1,
-    paddingRight: 10,
+    marginRight: 10,
   },
   cardTitle: {
     fontSize: 18,
+    fontWeight: 'bold',
     marginBottom: 5,
   },
   cardDescription: {
     fontSize: 14,
+    lineHeight: 20,
   },
   button: {
     borderRadius: 20,

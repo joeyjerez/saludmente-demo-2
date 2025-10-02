@@ -2,12 +2,23 @@ import React from "react";
 import { View, StyleSheet, ScrollView, Dimensions, Platform } from "react-native";
 import { Title, Text, Card, Button } from "react-native-paper";
 import { colors } from "../theme/colors";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type RootStackParamList = {
+  Home: undefined;
+  Diario: undefined;
+  Relajacion: undefined;
+};
+
+type HomePageProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, "Home">;
+};
 
 const { width } = Dimensions.get('window');
 const isTablet = width >= 768;
 const isSmallScreen = width < 375;
 
-export default function HomePage({ navigation }) {
+export default function HomePage({ navigation }: HomePageProps) {
   return (
     <ScrollView
       style={styles.container}

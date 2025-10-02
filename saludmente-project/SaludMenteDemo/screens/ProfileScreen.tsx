@@ -17,17 +17,44 @@ import {
   Button,
 } from "react-native-paper";
 import { colors } from "../theme/colors";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
+type RootStackParamList = {
+  HomePage: undefined;
+  Home: undefined;
+  Diario: undefined;
+  Capsulas: undefined;
+  Rutinas: undefined;
+  Relajacion: undefined;
+  Chatbot: undefined;
+  Notifications: undefined;
+  Profile: undefined;
+};
+
+type ProfileScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Profile'>;
+
+interface ProfileScreenProps {
+  navigation: ProfileScreenNavigationProp;
+}
+
+interface UserInfo {
+  name: string;
+  email: string;
+  memberSince: string;
+  completedActivities: number;
+  streak: number;
+}
 
 const { width } = Dimensions.get("window");
 const isTablet = width >= 768;
 const isSmallScreen = width < 375;
 
-export default function ProfileScreen({ navigation }) {
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [reminderEnabled, setReminderEnabled] = useState(true);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+export default function ProfileScreen({ navigation }: ProfileScreenProps) {
+  const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(true);
+  const [reminderEnabled, setReminderEnabled] = useState<boolean>(true);
+  const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
 
-  const userInfo = {
+  const userInfo: UserInfo = {
     name: "Usuario",
     email: "usuario@saludmente.com",
     memberSince: "Enero 2025",
@@ -37,7 +64,6 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Profile Header */}
       <View style={styles.profileHeader}>
         <Avatar.Icon
           size={80}
@@ -52,7 +78,6 @@ export default function ProfileScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* Stats Cards */}
       <View style={styles.statsContainer}>
         <Card
           style={[styles.statCard, { backgroundColor: colors.primary + "20" }]}
@@ -75,7 +100,6 @@ export default function ProfileScreen({ navigation }) {
         </Card>
       </View>
 
-      {/* Profile Options */}
       <Card style={styles.optionsCard}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Configuración</Title>
@@ -129,77 +153,49 @@ export default function ProfileScreen({ navigation }) {
         </Card.Content>
       </Card>
 
-      {/* Account Options */}
       <Card style={styles.optionsCard}>
         <Card.Content>
           <Title style={styles.sectionTitle}>Cuenta</Title>
 
           <List.Item
-            title="Editar Información Personal"
-            description="Actualizar nombre, email y más"
-            left={() => (
-              <List.Icon icon="account-edit" color={colors.routines} />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-            onPress={() => {
-              /* Navegar a editar perfil */
-            }}
+            title="Editar Perfil"
+            description="Actualiza tu información personal"
+            left={() => <List.Icon icon="account-edit" color={colors.primary} />}
+            right={() => <List.Icon icon="chevron-right" />}
+            onPress={() => {}}
           />
 
           <Divider />
 
           <List.Item
             title="Cambiar Contraseña"
-            description="Actualizar tu contraseña de acceso"
-            left={() => <List.Icon icon="lock" color={colors.relaxation} />}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-            onPress={() => {
-              /* Navegar a cambiar contraseña */
-            }}
+            description="Modifica tu contraseña de acceso"
+            left={() => <List.Icon icon="lock-reset" color={colors.diary} />}
+            right={() => <List.Icon icon="chevron-right" />}
+            onPress={() => {}}
           />
 
           <Divider />
 
           <List.Item
             title="Privacidad"
-            description="Configuración de datos y privacidad"
-            left={() => (
-              <List.Icon icon="shield-account" color={colors.chatbot} />
-            )}
-            right={() => (
-              <List.Icon icon="chevron-right" color={colors.text.secondary} />
-            )}
-            onPress={() => {
-              /* Navegar a privacidad */
-            }}
+            description="Gestiona tu privacidad y datos"
+            left={() => <List.Icon icon="shield-account" color={colors.education} />}
+            right={() => <List.Icon icon="chevron-right" />}
+            onPress={() => {}}
           />
         </Card.Content>
       </Card>
 
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
+      <View style={styles.logoutContainer}>
         <Button
           mode="outlined"
-          onPress={() => {
-            /* Exportar datos */
-          }}
-          style={styles.actionButton}
-          icon="export"
+          onPress={() => {}}
+          style={styles.logoutButton}
+          textColor={colors.error}
+          icon="logout"
         >
-          Exportar Mis Datos
-        </Button>
-
-        <Button
-          mode="contained"
-          onPress={() => navigation.goBack()}
-          style={[styles.actionButton, { backgroundColor: colors.primary }]}
-          icon="check"
-        >
-          Guardar Cambios
+          Cerrar Sesión
         </Button>
       </View>
     </ScrollView>
@@ -213,86 +209,90 @@ const styles = StyleSheet.create({
   },
   profileHeader: {
     backgroundColor: colors.surface,
+    paddingHorizontal: isSmallScreen ? 15 : (isTablet ? 30 : 20),
+    paddingVertical: isTablet ? 35 : (isSmallScreen ? 25 : 30),
     alignItems: "center",
-    paddingHorizontal: isSmallScreen ? 20 : isTablet ? 40 : 30,
-    paddingVertical: isTablet ? 35 : isSmallScreen ? 25 : 30,
-    marginBottom: isTablet ? 25 : 20,
+    marginBottom: isTablet ? 20 : 15,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 4 : undefined,
   },
   avatar: {
     backgroundColor: colors.primary,
-    marginBottom: isTablet ? 20 : 15,
+    marginBottom: isTablet ? 18 : 12,
   },
   userName: {
-    fontSize: isTablet ? 28 : isSmallScreen ? 20 : 24,
+    fontSize: isTablet ? 28 : (isSmallScreen ? 22 : 24),
     fontWeight: "bold",
     color: colors.text.primary,
-    marginBottom: isTablet ? 8 : 5,
+    marginBottom: isTablet ? 6 : 4,
   },
   userEmail: {
-    fontSize: isTablet ? 18 : isSmallScreen ? 14 : 16,
+    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
-    marginBottom: isTablet ? 12 : 10,
+    marginBottom: isTablet ? 6 : 4,
   },
   memberSince: {
-    fontSize: isTablet ? 16 : isSmallScreen ? 12 : 14,
+    fontSize: isTablet ? 16 : (isSmallScreen ? 12 : 14),
     color: colors.text.secondary,
-    fontStyle: "italic",
   },
   statsContainer: {
-    flexDirection: isSmallScreen ? "column" : "row",
-    paddingHorizontal: isSmallScreen ? 12 : isTablet ? 20 : 15,
-    marginBottom: isTablet ? 25 : 20,
-    gap: isTablet ? 15 : 10,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: isSmallScreen ? 10 : (isTablet ? 20 : 15),
+    marginBottom: isTablet ? 20 : 15,
   },
   statCard: {
-    flex: isSmallScreen ? 0 : 1,
-    elevation: Platform.OS === "android" ? 2 : 0,
-    shadowColor: Platform.OS === "ios" ? "#000" : undefined,
-    shadowOffset: Platform.OS === "ios" ? { width: 0, height: 1 } : undefined,
-    shadowOpacity: Platform.OS === "ios" ? 0.1 : undefined,
-    shadowRadius: Platform.OS === "ios" ? 2 : undefined,
-    borderRadius: isTablet ? 15 : 12,
+    flex: 1,
+    marginHorizontal: isSmallScreen ? 5 : (isTablet ? 10 : 8),
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3 : undefined,
+    borderRadius: isTablet ? 14 : 12,
   },
   statContent: {
     alignItems: "center",
-    paddingVertical: isTablet ? 15 : 10,
+    paddingVertical: isTablet ? 16 : (isSmallScreen ? 10 : 12),
   },
   statNumber: {
-    fontSize: isTablet ? 28 : isSmallScreen ? 20 : 24,
+    fontSize: isTablet ? 36 : (isSmallScreen ? 28 : 32),
     fontWeight: "bold",
-    color: colors.text.primary,
+    color: colors.primary,
+    marginBottom: isTablet ? 6 : 4,
   },
   statLabel: {
-    fontSize: isTablet ? 14 : isSmallScreen ? 10 : 12,
+    fontSize: isTablet ? 16 : (isSmallScreen ? 12 : 14),
     color: colors.text.secondary,
     textAlign: "center",
-    marginTop: isTablet ? 8 : 5,
-    lineHeight: isTablet ? 18 : isSmallScreen ? 14 : 16,
   },
   optionsCard: {
-    marginHorizontal: isSmallScreen ? 12 : isTablet ? 20 : 15,
+    marginHorizontal: isSmallScreen ? 10 : (isTablet ? 20 : 15),
     marginBottom: isTablet ? 20 : 15,
-    elevation: Platform.OS === "android" ? 2 : 0,
-    shadowColor: Platform.OS === "ios" ? "#000" : undefined,
-    shadowOffset: Platform.OS === "ios" ? { width: 0, height: 1 } : undefined,
-    shadowOpacity: Platform.OS === "ios" ? 0.1 : undefined,
-    shadowRadius: Platform.OS === "ios" ? 2 : undefined,
-    borderRadius: isTablet ? 15 : 12,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 3 : undefined,
+    borderRadius: isTablet ? 14 : 12,
   },
   sectionTitle: {
-    fontSize: isTablet ? 20 : isSmallScreen ? 16 : 18,
+    fontSize: isTablet ? 22 : (isSmallScreen ? 18 : 20),
     fontWeight: "bold",
     color: colors.text.primary,
-    marginBottom: isTablet ? 15 : 10,
+    marginBottom: isTablet ? 14 : 10,
   },
-  actionButtons: {
-    paddingHorizontal: isSmallScreen ? 12 : isTablet ? 20 : 15,
-    paddingBottom: isTablet ? 40 : 30,
-    gap: isTablet ? 20 : 15,
+  logoutContainer: {
+    paddingHorizontal: isSmallScreen ? 10 : (isTablet ? 20 : 15),
+    paddingVertical: isTablet ? 25 : (isSmallScreen ? 15 : 20),
   },
-  actionButton: {
-    borderRadius: isTablet ? 30 : 25,
-    paddingVertical: isTablet ? 8 : 5,
-    minHeight: isTablet ? 50 : 45,
+  logoutButton: {
+    borderColor: colors.error,
+    borderWidth: 1.5,
+    paddingVertical: isTablet ? 6 : 4,
+    borderRadius: isTablet ? 12 : 10,
   },
 });

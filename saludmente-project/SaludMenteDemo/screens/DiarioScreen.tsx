@@ -2,13 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
 import { TextInput, Button, Card, Title, Text, Chip } from 'react-native-paper';
 import { colors } from '../theme/colors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function DiarioScreen() {
-  const [entry, setEntry] = useState('');
-  const [mood, setMood] = useState('');
-  const [entries, setEntries] = useState([]);
+type RootStackParamList = {
+  HomePage: undefined;
+  Home: undefined;
+  Diario: undefined;
+  Capsulas: undefined;
+  Rutinas: undefined;
+  Relajacion: undefined;
+  Chatbot: undefined;
+  Notifications: undefined;
+  Profile: undefined;
+};
 
-  const moods = [
+type DiarioScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Diario'>;
+
+interface DiarioScreenProps {
+  navigation?: DiarioScreenNavigationProp;
+}
+
+interface MoodOption {
+  label: string;
+  value: string;
+  color: string;
+}
+
+interface DiaryEntry {
+  id: number;
+  text: string;
+  mood: string;
+  date: string;
+}
+
+export default function DiarioScreen({ navigation }: DiarioScreenProps) {
+  const [entry, setEntry] = useState<string>('');
+  const [mood, setMood] = useState<string>('');
+  const [entries, setEntries] = useState<DiaryEntry[]>([]);
+
+  const moods: MoodOption[] = [
     { label: '😊 Feliz', value: 'feliz', color: colors.mood.feliz },
     { label: '😢 Triste', value: 'triste', color: colors.mood.triste },
     { label: '😰 Ansioso', value: 'ansioso', color: colors.mood.ansioso },
@@ -17,13 +49,13 @@ export default function DiarioScreen() {
     { label: '😤 Enojado', value: 'enojado', color: colors.mood.enojado }
   ];
 
-  const saveEntry = async () => {
+  const saveEntry = async (): Promise<void> => {
     if (!entry.trim() || !mood) {
       Alert.alert('Error', 'Por favor completa todos los campos');
       return;
     }
 
-    const newEntry = {
+    const newEntry: DiaryEntry = {
       id: Date.now(),
       text: entry,
       mood: mood,
@@ -42,12 +74,12 @@ export default function DiarioScreen() {
     Alert.alert('¡Guardado!', 'Tu entrada ha sido guardada exitosamente');
   };
 
-  const getMoodEmoji = (moodValue) => {
+  const getMoodEmoji = (moodValue: string): string => {
     const foundMood = moods.find(m => m.value === moodValue);
     return foundMood ? foundMood.label : '😐 Neutral';
   };
 
-  const getMoodColor = (moodValue) => {
+  const getMoodColor = (moodValue: string): string => {
     const foundMood = moods.find(m => m.value === moodValue);
     return foundMood ? foundMood.color : colors.text.secondary;
   };
@@ -104,8 +136,7 @@ export default function DiarioScreen() {
         <Button 
           mode="contained" 
           onPress={saveEntry}
-          style={[styles.saveButton, { backgroundColor: colors.education }]}
-          icon="content-save"
+          style={styles.saveButton}
           labelStyle={{ color: colors.text.white }}
         >
           Guardar Entrada
@@ -113,12 +144,12 @@ export default function DiarioScreen() {
       </View>
 
       <View style={styles.entriesSection}>
-        <Title style={styles.sectionTitle}>Entradas Anteriores</Title>
+        <Title style={styles.sectionTitle}>Mis Entradas</Title>
         {entries.length === 0 ? (
           <Card style={styles.emptyCard}>
             <Card.Content>
               <Text style={styles.emptyText}>
-                Aún no tienes entradas. ¡Escribe tu primera entrada arriba!
+                Aún no tienes entradas en tu diario. ¡Comienza escribiendo sobre tu día!
               </Text>
             </Card.Content>
           </Card>
@@ -127,15 +158,10 @@ export default function DiarioScreen() {
             <Card key={item.id} style={styles.entryCard}>
               <Card.Content>
                 <View style={styles.entryHeader}>
-                  <Text style={styles.entryDate}>{item.date}</Text>
-                  <Chip 
-                    mode="flat" 
-                    compact
-                    style={{ backgroundColor: getMoodColor(item.mood) }}
-                    textStyle={{ color: colors.text.white }}
-                  >
+                  <Text style={[styles.moodText, { color: getMoodColor(item.mood) }]}>
                     {getMoodEmoji(item.mood)}
-                  </Chip>
+                  </Text>
+                  <Text style={styles.dateText}>{item.date}</Text>
                 </View>
                 <Text style={styles.entryText}>{item.text}</Text>
               </Card.Content>
@@ -148,63 +174,51 @@ export default function DiarioScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollView: {
     flex: 1,
     backgroundColor: colors.background,
   },
-  scrollView: {
-    flexGrow: 1,
-    backgroundColor: colors.background,
-  },
   inputSection: {
-    backgroundColor: colors.surface,
     padding: 20,
+    backgroundColor: colors.surface,
     marginBottom: 10,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 15,
     color: colors.text.primary,
+    marginBottom: 15,
     textAlign: 'center',
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 10,
     color: colors.text.primary,
+    marginBottom: 10,
+    marginTop: 15,
   },
   moodContainer: {
     flexDirection: 'row',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   moodChip: {
     marginRight: 8,
-    marginVertical: 4,
   },
   textInput: {
+    backgroundColor: colors.background,
     marginBottom: 20,
-    backgroundColor: colors.surface,
   },
   saveButton: {
-    paddingVertical: 6,
-    borderRadius: 25,
+    backgroundColor: colors.primary,
+    paddingVertical: 8,
   },
   entriesSection: {
-    padding: 10,
-  },
-  emptyCard: {
-    marginVertical: 10,
-    elevation: 2,
-  },
-  emptyText: {
-    textAlign: 'center',
-    color: colors.text.secondary,
-    fontSize: 16,
+    padding: 20,
   },
   entryCard: {
-    marginVertical: 8,
-    elevation: 3,
+    marginBottom: 15,
+    backgroundColor: colors.surface,
+    elevation: 2,
   },
   entryHeader: {
     flexDirection: 'row',
@@ -212,14 +226,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  entryDate: {
-    fontSize: 14,
+  moodText: {
+    fontSize: 24,
+  },
+  dateText: {
+    fontSize: 12,
     color: colors.text.secondary,
-    marginBottom: 5,
   },
   entryText: {
     fontSize: 16,
-    lineHeight: 24,
     color: colors.text.primary,
+    lineHeight: 24,
+  },
+  emptyCard: {
+    backgroundColor: colors.surface,
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.text.secondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });

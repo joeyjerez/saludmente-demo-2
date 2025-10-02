@@ -2,12 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Title, Text, Checkbox, Button, ProgressBar } from 'react-native-paper';
 import { colors } from '../theme/colors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-export default function RutinasScreen() {
-  const [rutinas, setRutinas] = useState([]);
-  const [completedToday, setCompletedToday] = useState({});
+type RootStackParamList = {
+  HomePage: undefined;
+  Home: undefined;
+  Diario: undefined;
+  Capsulas: undefined;
+  Rutinas: undefined;
+  Relajacion: undefined;
+  Chatbot: undefined;
+  Notifications: undefined;
+  Profile: undefined;
+};
 
-  const rutinasDefault = [
+type RutinasScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Rutinas'>;
+
+interface RutinasScreenProps {
+  navigation?: RutinasScreenNavigationProp;
+}
+
+interface Rutina {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  time: string;
+  icon: string;
+  color: string;
+}
+
+interface CompletedRutinas {
+  [key: number]: boolean;
+}
+
+export default function RutinasScreen({ navigation }: RutinasScreenProps) {
+  const [rutinas, setRutinas] = useState<Rutina[]>([]);
+  const [completedToday, setCompletedToday] = useState<CompletedRutinas>({});
+
+  const rutinasDefault: Rutina[] = [
     {
       id: 1,
       title: 'Meditación matutina',
@@ -86,11 +119,11 @@ export default function RutinasScreen() {
     initializeRutinas();
   }, []);
 
-  const initializeRutinas = () => {
+  const initializeRutinas = (): void => {
     setRutinas(rutinasDefault);
   };
 
-  const toggleRutina = (rutinaId) => {
+  const toggleRutina = (rutinaId: number): void => {
     const newCompleted = {
       ...completedToday,
       [rutinaId]: !completedToday[rutinaId]
@@ -98,16 +131,16 @@ export default function RutinasScreen() {
     setCompletedToday(newCompleted);
   };
 
-  const resetRutinas = () => {
+  const resetRutinas = (): void => {
     setCompletedToday({});
   };
 
-  const getProgress = () => {
+  const getProgress = (): number => {
     const completed = Object.values(completedToday).filter(Boolean).length;
     return completed / rutinas.length;
   };
 
-  const getCompletedCount = () => {
+  const getCompletedCount = (): number => {
     return Object.values(completedToday).filter(Boolean).length;
   };
 
@@ -138,105 +171,79 @@ export default function RutinasScreen() {
             </View>
             <ProgressBar 
               progress={getProgress()} 
-              color={colors.education} 
+              color={colors.success}
               style={styles.progressBar}
             />
-            <Text style={styles.progressText}>
-              {Math.round(getProgress() * 100)}% completado
-            </Text>
+            <Button 
+              mode="text" 
+              onPress={resetRutinas}
+              style={styles.resetButton}
+              textColor={colors.text.secondary}
+            >
+              Reiniciar Día
+            </Button>
           </Card.Content>
         </Card>
       </View>
 
       <View style={styles.rutinasContainer}>
-        {rutinas.map((rutina) => {
-          const isCompleted = completedToday[rutina.id] || false;
-          return (
-            <Card 
-              key={rutina.id} 
-              style={[
-                styles.rutinaCard, 
-                { backgroundColor: colors.surfaceDark },
-                isCompleted && styles.completedCard
-              ]}
-            >
-              <Card.Content>
-                <View style={styles.rutinaHeader}>
-                  <View style={styles.rutinaInfo}>
-                    <View style={styles.rutinaTitle}>
-                      <Text style={styles.rutinaIcon}>{rutina.icon}</Text>
-                      <View style={styles.rutinaTitleText}>
-                        <Title style={[
-                          styles.title, 
-                          { color: isCompleted ? colors.text.secondary : colors.text.white },
-                          isCompleted && styles.completedTitle
-                        ]}>
-                          {rutina.title}
-                        </Title>
-                        <Text style={[styles.category, { color: rutina.color }]}>
-                          {rutina.category}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text style={[styles.description, { color: colors.text.light }]}>{rutina.description}</Text>
-                    <Text style={[styles.time, { color: colors.text.light }]}>⏱️ {rutina.time}</Text>
-                  </View>
-                  <Checkbox
-                    status={isCompleted ? 'checked' : 'unchecked'}
-                    onPress={() => toggleRutina(rutina.id)}
-                    color={rutina.color}
-                  />
+        {rutinas.map((rutina) => (
+          <Card key={rutina.id} style={styles.rutinaCard}>
+            <Card.Content>
+              <View style={styles.rutinaHeader}>
+                <View style={styles.rutinaIconContainer}>
+                  <Text style={styles.rutinaIcon}>{rutina.icon}</Text>
                 </View>
-              </Card.Content>
-            </Card>
-          );
-        })}
-      </View>
-
-      <View style={styles.actions}>
-        <Button 
-          mode="outlined" 
-          onPress={resetRutinas}
-          style={[styles.resetButton, { borderColor: colors.error }]}
-          textColor={colors.error}
-          icon="refresh"
-        >
-          Reiniciar Día
-        </Button>
+                <View style={styles.rutinaInfo}>
+                  <Text style={styles.rutinaTitle}>{rutina.title}</Text>
+                  <Text style={styles.rutinaDescription}>{rutina.description}</Text>
+                  <View style={styles.rutinaMetadata}>
+                    <Text style={[styles.rutinaCategory, { color: rutina.color }]}>
+                      {rutina.category}
+                    </Text>
+                    <Text style={styles.rutinaTime}>{rutina.time}</Text>
+                  </View>
+                </View>
+                <Checkbox
+                  status={completedToday[rutina.id] ? 'checked' : 'unchecked'}
+                  onPress={() => toggleRutina(rutina.id)}
+                  color={rutina.color}
+                />
+              </View>
+            </Card.Content>
+          </Card>
+        ))}
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   scrollView: {
-    flexGrow: 1,
+    flex: 1,
     backgroundColor: colors.background,
   },
   header: {
     backgroundColor: colors.surface,
     padding: 20,
-    marginBottom: 10,
+    paddingBottom: 15,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: colors.text.primary,
     textAlign: 'center',
+    marginBottom: 5,
   },
   headerSubtitle: {
     fontSize: 16,
     color: colors.text.secondary,
     textAlign: 'center',
-    marginTop: 5,
     marginBottom: 20,
   },
   progressCard: {
-    elevation: 3,
+    backgroundColor: colors.background,
+    elevation: 0,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -245,81 +252,66 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   progressTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 16,
+    fontWeight: '600',
     color: colors.text.primary,
   },
   progressCount: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: colors.education,
+    color: colors.success,
   },
   progressBar: {
     height: 8,
     borderRadius: 4,
-    marginBottom: 10,
+    backgroundColor: colors.cardBorder,
   },
-  progressText: {
-    textAlign: 'center',
-    color: colors.text.secondary,
-    fontSize: 14,
+  resetButton: {
+    marginTop: 5,
   },
   rutinasContainer: {
-    padding: 10,
+    padding: 15,
   },
   rutinaCard: {
-    marginVertical: 5,
-    elevation: 3,
-    borderRadius: 12,
-  },
-  completedCard: {
-    opacity: 0.7,
+    marginBottom: 12,
+    backgroundColor: colors.surface,
+    elevation: 2,
   },
   rutinaHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  rutinaIconContainer: {
+    marginRight: 12,
+  },
+  rutinaIcon: {
+    fontSize: 32,
   },
   rutinaInfo: {
     flex: 1,
-    paddingRight: 10,
   },
   rutinaTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.text.primary,
+    marginBottom: 4,
+  },
+  rutinaDescription: {
+    fontSize: 14,
+    color: colors.text.secondary,
+    marginBottom: 6,
+  },
+  rutinaMetadata: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
   },
-  rutinaIcon: {
-    fontSize: 24,
+  rutinaCategory: {
+    fontSize: 12,
+    fontWeight: '600',
     marginRight: 10,
   },
-  rutinaTitleText: {
-    flex: 1,
-  },
-  title: {
-    fontSize: 18,
-    marginBottom: 2,
-  },
-  completedTitle: {
-    textDecorationLine: 'line-through',
-  },
-  category: {
+  rutinaTime: {
     fontSize: 12,
-    fontWeight: 'bold',
-    textTransform: 'uppercase',
-  },
-  description: {
-    fontSize: 14,
-    marginBottom: 5,
-  },
-  time: {
-    fontSize: 12,
-  },
-  actions: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  resetButton: {
-    borderWidth: 1,
+    color: colors.text.secondary,
   },
 });

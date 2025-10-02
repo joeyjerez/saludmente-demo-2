@@ -2,13 +2,41 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Dimensions, Platform } from 'react-native';
 import { Title, Text, Card, List, Divider } from 'react-native-paper';
 import { colors } from '../theme/colors';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+type RootStackParamList = {
+  HomePage: undefined;
+  Home: undefined;
+  Diario: undefined;
+  Capsulas: undefined;
+  Rutinas: undefined;
+  Relajacion: undefined;
+  Chatbot: undefined;
+  Notifications: undefined;
+  Profile: undefined;
+};
+
+type NotificationsScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Notifications'>;
+
+interface NotificationsScreenProps {
+  navigation: NotificationsScreenNavigationProp;
+}
+
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  time: string;
+  type: 'reminder' | 'education' | 'achievement';
+  read: boolean;
+}
 
 const { width } = Dimensions.get('window');
 const isTablet = width >= 768;
 const isSmallScreen = width < 375;
 
-export default function NotificationsScreen({ navigation }) {
-  const notifications = [
+export default function NotificationsScreen({ navigation }: NotificationsScreenProps) {
+  const notifications: Notification[] = [
     {
       id: 1,
       title: 'Recordatorio de Diario',
@@ -35,7 +63,7 @@ export default function NotificationsScreen({ navigation }) {
     }
   ];
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = (type: Notification['type']): string => {
     switch (type) {
       case 'reminder':
         return 'bell-ring';
@@ -48,7 +76,7 @@ export default function NotificationsScreen({ navigation }) {
     }
   };
 
-  const getNotificationColor = (type) => {
+  const getNotificationColor = (type: Notification['type']): string => {
     switch (type) {
       case 'reminder':
         return colors.warning;
@@ -109,8 +137,7 @@ export default function NotificationsScreen({ navigation }) {
         <View style={styles.emptyState}>
           <List.Icon 
             icon="bell-outline" 
-            color={colors.text.secondary} 
-            size={64}
+            color={colors.text.secondary}
           />
           <Text style={styles.emptyText}>
             No tienes notificaciones por el momento
@@ -129,73 +156,73 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: colors.surface,
     paddingHorizontal: isSmallScreen ? 15 : (isTablet ? 30 : 20),
-    paddingVertical: isTablet ? 25 : 20,
-    marginBottom: isTablet ? 20 : 15,
+    paddingVertical: isTablet ? 30 : (isSmallScreen ? 20 : 25),
+    marginBottom: isTablet ? 18 : 12,
+    elevation: Platform.OS === 'android' ? 2 : 0,
+    shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
+    shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 2 } : undefined,
+    shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
+    shadowRadius: Platform.OS === 'ios' ? 4 : undefined,
   },
   title: {
-    fontSize: isTablet ? 28 : (isSmallScreen ? 20 : 24),
+    fontSize: isTablet ? 30 : (isSmallScreen ? 22 : 26),
     fontWeight: 'bold',
     color: colors.text.primary,
     textAlign: 'center',
+    marginBottom: isTablet ? 10 : 6,
   },
   subtitle: {
     fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
     textAlign: 'center',
-    marginTop: isTablet ? 8 : 5,
-    lineHeight: isTablet ? 24 : (isSmallScreen ? 20 : 22),
   },
   notificationsContainer: {
-    paddingHorizontal: isSmallScreen ? 12 : (isTablet ? 20 : 15),
+    paddingHorizontal: isSmallScreen ? 10 : (isTablet ? 20 : 15),
   },
   notificationCard: {
-    marginBottom: isTablet ? 15 : 10,
-    elevation: Platform.OS === 'android' ? 2 : 0,
+    marginBottom: isTablet ? 16 : 12,
+    elevation: Platform.OS === 'android' ? 1 : 0,
     shadowColor: Platform.OS === 'ios' ? '#000' : undefined,
     shadowOffset: Platform.OS === 'ios' ? { width: 0, height: 1 } : undefined,
     shadowOpacity: Platform.OS === 'ios' ? 0.1 : undefined,
     shadowRadius: Platform.OS === 'ios' ? 2 : undefined,
-    borderRadius: isTablet ? 15 : 12,
+    borderRadius: isTablet ? 14 : 10,
   },
   unreadCard: {
-    borderLeftWidth: isTablet ? 5 : 4,
+    borderLeftWidth: 4,
     borderLeftColor: colors.primary,
   },
   notificationIcon: {
-    marginTop: isTablet ? 10 : 8,
+    marginRight: isSmallScreen ? 8 : (isTablet ? 16 : 12),
   },
   notificationTitle: {
-    fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
-    fontWeight: '500',
+    fontSize: isTablet ? 18 : (isSmallScreen ? 15 : 16),
+    fontWeight: '600',
     color: colors.text.primary,
-    lineHeight: isTablet ? 24 : (isSmallScreen ? 20 : 22),
   },
   unreadTitle: {
     fontWeight: 'bold',
   },
   notificationDescription: {
-    fontSize: isTablet ? 16 : (isSmallScreen ? 12 : 14),
+    fontSize: isTablet ? 16 : (isSmallScreen ? 13 : 14),
     color: colors.text.secondary,
     marginTop: isTablet ? 6 : 4,
-    lineHeight: isTablet ? 22 : (isSmallScreen ? 18 : 20),
   },
   timeText: {
-    fontSize: isTablet ? 14 : (isSmallScreen ? 10 : 12),
+    fontSize: isTablet ? 14 : (isSmallScreen ? 11 : 12),
     color: colors.text.secondary,
-    marginTop: isTablet ? 15 : 12,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: isTablet ? 80 : 60,
-    paddingHorizontal: isSmallScreen ? 20 : 30,
+    paddingVertical: isTablet ? 80 : (isSmallScreen ? 50 : 60),
   },
   emptyText: {
     fontSize: isTablet ? 18 : (isSmallScreen ? 14 : 16),
     color: colors.text.secondary,
+    marginTop: isTablet ? 20 : 15,
     textAlign: 'center',
-    marginTop: isTablet ? 25 : 20,
-    lineHeight: isTablet ? 26 : (isSmallScreen ? 20 : 22),
+    paddingHorizontal: isSmallScreen ? 30 : (isTablet ? 60 : 40),
   },
 });
