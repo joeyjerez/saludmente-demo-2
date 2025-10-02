@@ -73,3 +73,34 @@ Centralized color management through a dedicated theme system that defines:
 ## Development Tools
 - **@babel/core (^7.20.0)**: JavaScript compiler for modern React Native features
 - **expo-status-bar (~2.2.3)**: Status bar configuration for mobile platforms
+- **TypeScript (^5.7.3)**: Static type checking for improved code quality and developer experience
+- **@types/react**: TypeScript definitions for React
+- **@types/react-native**: TypeScript definitions for React Native
+
+# TypeScript Integration
+
+## Migration Status
+**Date**: October 2, 2025  
+**Status**: Completed
+
+All screen components have been migrated from JavaScript (.js) to TypeScript (.tsx), providing:
+- Type-safe navigation props using React Navigation types
+- Explicit type definitions for all component states
+- Interface definitions for data structures (diary entries, notifications, routines, etc.)
+- Enhanced IDE support with autocompletion and type checking
+
+## TypeScript Configuration
+The project includes a `tsconfig.json` file configured for Expo with:
+- Strict type checking enabled
+- React Native JSX support
+- ES module interoperability
+- Path resolution for better imports
+
+## Typed Components
+All screen components now include:
+- **Navigation Props**: Type-safe navigation using `NativeStackNavigationProp<RootStackParamList>`
+- **State Types**: Explicit types for all `useState` hooks
+- **Data Interfaces**: Structured types for domain models (entries, routines, exercises, messages, etc.)
+- **Function Signatures**: Type-safe parameters and return values
+
+This migration improves code maintainability, reduces runtime errors, and provides better developer experience through enhanced IDE support.
